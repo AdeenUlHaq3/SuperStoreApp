@@ -7,21 +7,82 @@ import {
   Text,
   TouchableOpacity,
   View,
+  Button
 } from 'react-native';
 import { WebBrowser } from 'expo';
+import FoldView from 'react-native-foldview';
 
 import { MonoText } from '../components/StyledText';
 
-export default class HomeScreen extends React.Component {
+const Frontface = (props) => <Button title='Front Face' onPress={props.flip}></Button>;
+const Backface = (props) => <Button title='' onPress={props.flip}></Button>;
+const Base = (props) => <Button title='' onPress={props.flip}></Button>;
+
+export default class User extends React.Component {
+  state = {
+    expanded: false
+  };
+
   static navigationOptions = {
     header: null,
+  };
+
+  flip = () => {
+    this.setState({
+      expanded: !this.state.expanded,
+    });
+  };
+
+  renderFrontface = () => {
+    return (
+      <Frontface flip={this.flip} />
+    );
+  };
+
+  collapse = async (foldViews) => {
+    await Promise.all(foldViews.map(foldView => foldView.collapse()));
+  };
+
+  expand = async (foldViews) => {
+    await Promise.all(foldViews.map(foldView => foldView.expand()));
+  };
+
+  renderBackface = () => {
+    /**
+     * You can nest <FoldView>s here to achieve the folding effect shown in the GIF above.
+     * A reference implementation can be found in examples/Simple.
+     */
+    return (
+      <Backface
+        flip={this.flip}
+      >
+        <FoldView
+          expanded={this.state.expanded}
+          renderBackface={this.renderBackface}
+          renderFrontface={this.renderFrontface}
+        >
+          <Base />
+        </FoldView>
+      </Backface>
+    );
   };
 
   render() {
     return (
       <View style={styles.container}>
         <ScrollView style={styles.container} contentContainerStyle={styles.contentContainer}>
-          <View style={styles.welcomeContainer}>
+          <FoldView
+            expand={this.expand}
+            collapse={this.collapse}
+            expanded={this.state.expanded}
+            renderBackface={this.renderBackface}
+            renderFrontface={this.renderFrontface}
+          >
+            <Base
+              flip={this.flip}
+            />
+          </FoldView>
+          {/* <View style={styles.welcomeContainer}>
             <Image
               source={
                 __DEV__
@@ -50,7 +111,7 @@ export default class HomeScreen extends React.Component {
             <TouchableOpacity onPress={this._handleHelpPress} style={styles.helpLink}>
               <Text style={styles.helpLinkText}>Help, it didn’t automatically reload!</Text>
             </TouchableOpacity>
-          </View>
+          </View> */}
         </ScrollView>
 
         <View style={styles.tabBarInfoContainer}>
