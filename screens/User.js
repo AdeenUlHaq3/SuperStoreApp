@@ -10,6 +10,7 @@ import {
   Button
 } from 'react-native';
 import { WebBrowser } from 'expo';
+import { Drawer } from 'native-base';
 import FoldView from 'react-native-foldview';
 
 import { MonoText } from '../components/StyledText';
@@ -68,20 +69,27 @@ export default class User extends React.Component {
   };
 
   render() {
+    closeDrawer = () => {
+      this.drawer._root.close();
+    };
+  
+    openDrawer = () => {
+      this.drawer._root.open();
+    };
+
     return (
       <View style={styles.container}>
-        <ScrollView style={styles.container} contentContainerStyle={styles.contentContainer}>
-          <FoldView
-            expand={this.expand}
-            collapse={this.collapse}
-            expanded={this.state.expanded}
-            renderBackface={this.renderBackface}
-            renderFrontface={this.renderFrontface}
+      <Drawer
+            ref={(ref) => {this.drawer = ref;}}
+            content={<Text>asda</Text>}
+            onClose={() => this.closeDrawer()}
+            onOpen={() => this.openDrawer()}
           >
-            <Base
-              flip={this.flip}
-            />
-          </FoldView>
+
+          </Drawer>
+        <ScrollView style={styles.container} contentContainerStyle={styles.contentContainer}>
+          
+          
           {/* <View style={styles.welcomeContainer}>
             <Image
               source={
@@ -114,13 +122,13 @@ export default class User extends React.Component {
           </View> */}
         </ScrollView>
 
-        <View style={styles.tabBarInfoContainer}>
+        {/* <View style={styles.tabBarInfoContainer}>
           <Text style={styles.tabBarInfoText}>This is a tab bar. You can edit it in:</Text>
 
           <View style={[styles.codeHighlightContainer, styles.navigationFilename]}>
             <MonoText style={styles.codeHighlightText}>navigation/MainTabNavigator.js</MonoText>
           </View>
-        </View>
+        </View> */}
       </View>
     );
   }
